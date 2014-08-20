@@ -188,3 +188,17 @@ def quote_listi(bot, trigger):
                 bot.say(unconv(i))
             return
 
+
+
+
+
+@commands('quotehelp')
+def quote_help(bot):
+    """ Gives list of commands """
+
+    bot.reply("To add a quote: \'.aq QUOTE_HERE\' ")
+
+    return
+
+
+
