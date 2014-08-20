@@ -1,0 +1,54 @@
+import willie
+from random import choice
+import datetime
+import requests
+
+alotImages = ["http://i.imgur.com/7GJ5XoB.png",
+              "http://i.imgur.com/xncEQ8B.png",
+              "http://i.imgur.com/3t5QHBu.png",
+              "http://i.imgur.com/Bz2ei9E.png",
+              "http://i.imgur.com/lqBkdnP.png",
+              "http://i.imgur.com/7gdB5fU.png",
+              "http://i.imgur.com/B0jd549.png",
+              "http://i.imgur.com/4Jpt8k6.png",
+              "http://i.imgur.com/BlEay4o.png",
+              "http://i.imgur.com/5X5a4ZQ.png",
+              "http://i.imgur.com/iLLLhnP.png",
+              "http://i.imgur.com/nMgttwX.png"]
+
+@willie.module.rule(r'(^|.+ )alot( .+|$)')
+def alot(bot, trigger):
+   bot.say("%s LEARN TO SPELL: %s" % (trigger.nick, choice(alotImages)))
+
+@willie.module.commands('zen')
+def zen(bot, trigger):
+   bot.say(requests.get("https://api.github.com/zen").text)
+
+@willie.module.commands('nfact')
+def nfact(bot, trigger):
+   bot.say(requests.get("http://numbersapi.com/random").text)
+
+@willie.module.commands('42')
+def fourtytwo(bot, trigger):
+   bot.say(requests.get("http://numbersapi.com/42").text)
+
+@willie.module.commands('tfact')
+def today(bot, trigger):
+   month = datetime.datetime.now().month
+   day = datetime.datetime.now().day
+   bot.say(requests.get("http://numbersapi.com/%s/%s/date" % (month, day)).text)
+
+@willie.module.commands('ask', 'askreddit', 'asscredit')
+def ask(bot, trigger):
+  header =  {"User-Agent": "Boredbot/1.0 by sc00ty"}
+  bot.say(choice(requests.get("http://www.reddit.com/r/askreddit.json?limit=100", headers=header).json()["data"]["children"])["data"]["title"])
+
+@willie.module.commands('shower')
+def shower(bot, trigger):
+  header =  {"User-Agent": "Boredbot/1.0 by sc00ty"}
+  bot.say(choice(requests.get("http://www.reddit.com/r/showerthoughts.json?limit=100", headers=header).json()["data"]["children"])["data"]["title"])
+
+@willie.module.commands('mirror')
+def mirror(bot, trigger):
+  if trigger.group(2):
+    bot.say("http://mirror.h1x0.net/%s" % trigger.group(2))
