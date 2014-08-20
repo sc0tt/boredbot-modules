@@ -73,7 +73,7 @@ def get_conv(bot, trigger):
             number = int(trigger.group(2))
             output = str(number) + ": " + quote_list[number - 1]
         except ValueError:
-            bot.say(u"Vittuu noi vammaset argumentit :D sen pitää olla numero eikä mikää tekstin pätkä")
+            bot.say(u"Must be a number or a string!")
             return
     # if no quote number is given, this picks a quote randomly
     else:
@@ -101,17 +101,17 @@ def quote_del(bot, trigger):
 
     # This if-bit allows only me (meicceli) to delete all the quotes, but
     # allows others to delete one quote per 60 seconds (rate is 60)
-    if del_key == "all" and trigger.nick.lower() == "meicceli":
+    if del_key == "all" and trigger.admin:
         bot.db.preferences.update(trigger.sender, {'quotes': ""})
         bot.reply("All quotes deleted!")
         return
-    elif del_key.find(":") != -1 and trigger.nick.lower() == "meicceli":
+    elif del_key.find(":") != -1 and trigger.admin:
         uus_lista = "|".join(quote_list[:int(del_key[0]) - 1]) + "|"
         bot.db.preferences.update(trigger.sender, {'quotes': uus_lista})
         bot.reply("Deleted quotes, starting from " + str(int(del_key[0])))
         return
-    elif del_key == "all" and trigger.nick.lower() != "meicceli":
-        bot.reply("You don't have the permission to do that!")
+    elif del_key == "all" and trigger.admin:
+        bot.reply("You don't have the permission to do that! Ask an admin!")
         return
     else:
         pass
@@ -187,4 +187,18 @@ def quote_listi(bot, trigger):
             for i in bot.db.preferences.get(trigger.sender, 'quotes')[:-1].split("|"):
                 bot.say(unconv(i))
             return
+
+
+
+
+
+@commands('quotehelp')
+def quote_help(bot):
+    """ Gives list of commands """
+
+    bot.reply("To add a quote: \'.aq QUOTE_HERE\' ")
+
+    return
+
+
 
