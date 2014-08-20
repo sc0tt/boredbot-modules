@@ -101,17 +101,17 @@ def quote_del(bot, trigger):
 
     # This if-bit allows only me (meicceli) to delete all the quotes, but
     # allows others to delete one quote per 60 seconds (rate is 60)
-    if del_key == "all" and trigger.nick.lower() == "markisking":
+    if del_key == "all" and trigger.admin:
         bot.db.preferences.update(trigger.sender, {'quotes': ""})
         bot.reply("All quotes deleted!")
         return
-    elif del_key.find(":") != -1 and trigger.nick.lower() == "markisking":
+    elif del_key.find(":") != -1 and trigger.admin:
         uus_lista = "|".join(quote_list[:int(del_key[0]) - 1]) + "|"
         bot.db.preferences.update(trigger.sender, {'quotes': uus_lista})
         bot.reply("Deleted quotes, starting from " + str(int(del_key[0])))
         return
-    elif del_key == "all" and trigger.nick.lower() != "markisking":
-        bot.reply("You don't have the permission to do that! Ask Markisking")
+    elif del_key == "all" and trigger.admin:
+        bot.reply("You don't have the permission to do that! Ask an admin!")
         return
     else:
         pass
