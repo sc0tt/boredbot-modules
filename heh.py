@@ -48,6 +48,18 @@ def shower(bot, trigger):
   header =  {"User-Agent": "Boredbot/1.0 by sc00ty"}
   bot.say(choice(requests.get("http://www.reddit.com/r/showerthoughts.json?limit=100", headers=header).json()["data"]["children"])["data"]["title"])
 
+@willie.module.commands('5050')
+def fifty(bot, trigger):
+  header =  {"User-Agent": "Boredbot/1.0 by sc00ty"}
+  pick = choice(requests.get("http://www.reddit.com/r/fiftyfifty.json?limit=100", headers=header).json()["data"]["children"])["data"]
+  bot.say("%s - %s" % (pick["title"], pick["url"]))
+
+@willie.module.commands('rather')
+def rather(bot, trigger):
+  header =  {"User-Agent": "Boredbot/1.0 by sc00ty"}
+  bot.say(choice(requests.get("http://www.reddit.com/r/wouldyourather.json?limit=100", headers=header).json()["data"]["children"])["data"]["title"])
+
+
 @willie.module.commands('mirror')
 def mirror(bot, trigger):
   if trigger.group(2):
