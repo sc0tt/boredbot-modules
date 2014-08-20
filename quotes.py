@@ -193,7 +193,7 @@ def quote_listi(bot, trigger):
 
 
 @commands('quotehelp')
-def quote_help(bot):
+def quote_help(bot, trigger):
     """ Gives list of commands """
 
     bot.reply("To add a quote: \'.aq QUOTE_HERE\' ")
