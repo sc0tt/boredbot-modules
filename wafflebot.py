@@ -64,13 +64,13 @@ def wafflebot_talk(bot, trigger):
     if not seed:
       if len(old_seed.split()) < 2:
         temp_seed = " ".join([sentence[-2::], old_seed])
-        seed = db.srandmember(seed)
+        seed = db.srandmember(temp_seed)
       elif len(old_seed.split()) < 3:
         temp_seed = " ".join([sentence[-1::], old_seed])
-        seed = db.srandmember(seed)
+        seed = db.srandmember(temp_seed)
       else:
         temp_seed = old_seed[-2::]
-        seed = db.srandmember(seed)
+        seed = db.srandmember(temp_seed)
       if not seed:
         break
 
