@@ -24,3 +24,9 @@ def mapimages(bot, trigger):
         db.set(key.lower(), word)
   else:
     bot.say("-- .m <key> <value>")
+
+@willie.module.commands('mrand')
+def rand_image(bot, trigger):
+  k = db.randomkey()
+  image = db.get(k)
+  bot.say("%s - %s" % (k, image))

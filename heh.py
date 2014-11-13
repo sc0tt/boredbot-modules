@@ -16,6 +16,13 @@ alotImages = ["http://i.imgur.com/7GJ5XoB.png",
               "http://i.imgur.com/iLLLhnP.png",
               "http://i.imgur.com/nMgttwX.png"]
 
+@willie.module.commands('pax')
+def pax(bot, trigger):
+   paxDate = datetime.datetime(2015, 3, 6)
+   now = datetime.datetime.now()
+   daysToPax = (paxDate - now).days
+   bot.say("%s days until PAX East!" % (daysToPax,))
+
 @willie.module.rule(r'(^|.+ )alot( .+|$)')
 def alot(bot, trigger):
    bot.say("%s LEARN TO SPELL: %s" % (trigger.nick, choice(alotImages)))
@@ -64,3 +71,8 @@ def rather(bot, trigger):
 def mirror(bot, trigger):
   if trigger.group(2):
     bot.say("http://mirror.h1x0.net/%s" % trigger.group(2))
+
+@willie.module.commands('insult')
+def insult(bot, trigger):
+  insult = requests.get('http://pleaseinsult.me/api?severity=random').json()['insult']
+  bot.say(insult)
