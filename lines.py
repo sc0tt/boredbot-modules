@@ -11,5 +11,6 @@ def lines(bot, trigger):
 
 @willie.module.commands('lines')
 def getlines(bot, trigger):
-  lines = db.get(trigger.nick) or 0
-  bot.say("%s: You've said %s lines" % (trigger.nick, lines))
+  user = trigger.group(2) or trigger.nick
+  lines = db.get(user) or 0
+  bot.say("%s has said %s lines" % (user, lines))
