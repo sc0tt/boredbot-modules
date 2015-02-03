@@ -15,5 +15,13 @@ def mapimages(bot, trigger):
 
 @willie.module.commands('k')
 def rand_image(bot, trigger):
-  k = db.randomkey()
-  bot.say("k %s" % (k))
+  img = trigger.group(2)
+  if img:
+    if db.get(img) is None:
+      db.set(img, True)
+      bot.say("Added.")
+    else:
+      bot.say("Already exists.")
+  else:
+    k = db.randomkey()
+    bot.say("k %s" % (k))
