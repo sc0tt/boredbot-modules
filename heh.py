@@ -70,10 +70,10 @@ def rather(bot, trigger):
   bot.say(choice(requests.get("http://www.reddit.com/r/wouldyourather.json?limit=100", headers=header).json()["data"]["children"])["data"]["title"])
 
 
-@willie.module.commands('mirror')
+@willie.module.commands('mirror', 'h', 'h1x0')
 def mirror(bot, trigger):
   if trigger.group(2):
-    bot.say("http://mirror.h1x0.net/%s" % trigger.group(2))
+    bot.say("http://m.h1x0.net/%s" % trigger.group(2))
 
 @willie.module.commands('insult')
 def insult(bot, trigger):
