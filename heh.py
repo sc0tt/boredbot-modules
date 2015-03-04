@@ -18,10 +18,13 @@ alotImages = ["http://i.imgur.com/7GJ5XoB.png",
 
 @willie.module.commands('pax')
 def pax(bot, trigger):
-   paxDate = datetime.datetime(2015, 3, 6)
-   now = datetime.datetime.now()
-   daysToPax = (paxDate - now).days
-   bot.say("%s days until PAX East!" % (daysToPax,))
+   now = datetime.datetime.now()     
+   pax = datetime.datetime(2015, 3, 6, 10)
+   delta = pax - now
+   hours, remainder = divmod(delta.seconds, 3600)
+   minutes, seconds = divmod(remainder, 60) 
+   output = "{days} days, {hours} hours, {minutes} minutes, and {seconds} seconds until PAX!".format(days=delta.days, hours=hours, minutes=minutes, seconds=seconds)
+   bot.say(output)
 
 @willie.module.rule(r'(^|.+ )alot( .+|$)')
 def alot(bot, trigger):
