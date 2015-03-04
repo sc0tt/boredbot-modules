@@ -21,9 +21,25 @@ def pax(bot, trigger):
    now = datetime.datetime.now()     
    pax = datetime.datetime(2015, 3, 6, 10)
    delta = pax - now
-   hours, remainder = divmod(delta.seconds, 3600)
-   minutes, seconds = divmod(remainder, 60) 
-   output = "{days} days, {hours} hours, {minutes} minutes, and {seconds} seconds until PAX!".format(days=delta.days, hours=hours, minutes=minutes, seconds=seconds)
+   if delta.days < 6:
+      hours, remainder = divmod(delta.seconds, 3600)
+      minutes, seconds = divmod(remainder, 60) 
+      output = "{days} days, {hours} hours, {minutes} minutes, and {seconds} seconds until PAX!".format(days=delta.days, hours=hours, minutes=minutes, seconds=seconds)
+   else:
+      output = "%s days until PAX!" % delta.days
+   bot.say(output)
+
+@willie.module.commands('sgdq')
+def sgdq(bot, trigger):
+   now = datetime.datetime.now()
+   target = datetime.datetime(2015, 7, 26, 0)
+   delta = target - now
+   if delta.days < 7:
+      hours, remainder = divmod(delta.seconds, 3600)
+      minutes, seconds = divmod(remainder, 60)
+      output = "{days} days, {hours} hours, {minutes} minutes, and {seconds} seconds until SGDQ!".format(days=delta.days, hours=hours, minutes=minutes, seconds=seconds)
+   else:
+      output = "%s days until SGDQ!" % delta.days
    bot.say(output)
 
 @willie.module.rule(r'(^|.+ )alot( .+|$)')
