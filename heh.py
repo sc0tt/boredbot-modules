@@ -19,7 +19,7 @@ alotImages = ["http://i.imgur.com/7GJ5XoB.png",
 @willie.module.commands('pax')
 def pax(bot, trigger):
    now = datetime.datetime.now()     
-   pax = datetime.datetime(2015, 3, 6, 10)
+   pax = datetime.datetime(2016, 4, 22, 10)
    delta = pax - now
    if delta.days < 6:
       hours, remainder = divmod(delta.seconds, 3600)
@@ -95,3 +95,20 @@ def mirror(bot, trigger):
 def insult(bot, trigger):
   insult = requests.get('http://pleaseinsult.me/api?severity=random').json()['insult']
   bot.say(insult)
+
+
+@willie.module.rule(r'^drumroll please$')
+def drumroll(bot, trigger, match=None):
+  bot.say("ghghghghghghghghghghghghghghghghghghghghghghghghghghghghghghghghgh")
+
+
+@willie.module.commands('rd')
+def reverseDict(bot, trigger):
+  word = trigger.group(2)
+  if not word:
+    bot.say("syntx: .rd <definition/description>")
+  else:
+    result = requests.get("http://api.datamuse.com/words", params={"rd": word}).json()
+    if result:
+      reply = "Possible words matching '%s': %s" % (word, ", ".join(w["word"] for w in result[0:5]))
+      bot.say(reply)
