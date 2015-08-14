@@ -19,7 +19,7 @@ def scan_files(bot):
       last_file_list = new_file_list
       return
 
-   new_files = [f for f in new_file_list if f not in last_file_list]
+   new_files = [f for f in new_file_list if f not in last_file_list and not f.startswith("_")]
    if new_files:
       output = "New Images: %s%s" % (prefix, (" %s" % prefix).join(new_files))
       last_file_list = new_file_list

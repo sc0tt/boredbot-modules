@@ -13,4 +13,4 @@ def lines(bot, trigger):
 def getlines(bot, trigger):
   user = trigger.group(2) or trigger.nick
   lines = db.get(user) or 0
-  bot.say("%s has said %s lines" % (user, lines))
+  bot.say("%s has said %s lines" % (user, int(lines)))

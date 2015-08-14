@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import willie
 from random import choice
 import datetime
@@ -32,7 +34,7 @@ def pax(bot, trigger):
 @willie.module.commands('sgdq')
 def sgdq(bot, trigger):
    now = datetime.datetime.now()
-   target = datetime.datetime(2015, 7, 26, 0)
+   target = datetime.datetime(2015, 7, 26, 13, 0, 0)
    delta = target - now
    if delta.days < 7:
       hours, remainder = divmod(delta.seconds, 3600)
@@ -69,6 +71,18 @@ def ask(bot, trigger):
   header =  {"User-Agent": "Boredbot/1.0 by sc00ty"}
   bot.say(choice(requests.get("http://www.reddit.com/r/askreddit.json?limit=100", headers=header).json()["data"]["children"])["data"]["title"])
 
+@willie.module.commands('meirl', 'me_irl', 'mirl', 'marl')
+def meirl(bot, trigger):
+  header =  {"User-Agent": "Boredbot/1.0 by sc00ty"}
+  pick = choice(requests.get("http://www.reddit.com/r/me_irl.json?limit=100", headers=header).json()["data"]["children"])["data"]
+  bot.say("%s%s - %s" % ("[NSFW] " if pick["over_18"] else "", pick["title"], pick["url"]))
+
+@willie.module.commands('meowirl', 'meow_irl')
+def meowirl(bot, trigger):
+  header =  {"User-Agent": "Boredbot/1.0 by sc00ty"}
+  pick = choice(requests.get("http://www.reddit.com/r/meow_irl.json?limit=100", headers=header).json()["data"]["children"])["data"]
+  bot.say("%s%s - %s" % ("[NSFW] " if pick["over_18"] else "", pick["title"], pick["url"]))
+
 @willie.module.commands('shower')
 def shower(bot, trigger):
   header =  {"User-Agent": "Boredbot/1.0 by sc00ty"}
@@ -91,10 +105,14 @@ def mirror(bot, trigger):
   if trigger.group(2):
     bot.say("http://m.h1x0.net/%s" % trigger.group(2))
 
-@willie.module.commands('insult')
-def insult(bot, trigger):
-  insult = requests.get('http://pleaseinsult.me/api?severity=random').json()['insult']
-  bot.say(insult)
+@willie.module.commands('lol')
+def lol(bot, trigger):
+  os = ["0", "o"]
+  ls = ["l", "1"]
+  count = 1 if not trigger.group(2) else trigger.group(2)
+  reply = choice(ls) + "".join([choice(os)+choice(ls) for _ in range(int(count))])
+  bot.say(reply)
+
 
 
 @willie.module.rule(r'^drumroll please$')
@@ -112,3 +130,7 @@ def reverseDict(bot, trigger):
     if result:
       reply = "Possible words matching '%s': %s" % (word, ", ".join(w["word"] for w in result[0:5]))
       bot.say(reply)
+
+@willie.module.commands("lenny")
+def lenny(bot, trigger):
+  bot.say(u"( ͡° ͜ʖ ͡°)")

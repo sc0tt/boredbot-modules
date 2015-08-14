@@ -8,8 +8,8 @@ def mapimages(bot, trigger):
   word = trigger.group(2)
 
   if word:
-    word = word.split()
-    key = word[0]
+    word = word.split("=")
+    key = word[0].strip()
 
     image = db.get(key.lower())
 
@@ -19,14 +19,14 @@ def mapimages(bot, trigger):
       if len(word) == 1:
         bot.say("Not Found")
       else:
-        word = " ".join(word[1:])
+        word = " ".join(word[1:]).strip()
         bot.say("%s = %s" % (key, word))
         db.set(key.lower(), word)
   else:
-    bot.say("-- .m <key> <value>")
+    bot.say("-- .m <key> = <value>")
 
 @willie.module.commands('mrand')
 def rand_image(bot, trigger):
   k = db.randomkey()
   image = db.get(k)
-  bot.say("%s - %s" % (k, image))
+  bot.say("%s - %s" % (k.decode("utf-8"), image.decode("utf-8")))

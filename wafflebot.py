@@ -46,38 +46,25 @@ def parse_line(ln, split_lines=False, pair_len=3, min_sentence_len=6):
 @willie.module.rule(r'.*$')
 def wafflebot(bot, trigger):
   three_pairs = parse_line(trigger)
-  two_pairs = parse_line(trigger, pair_len=2, min_sentence_len=4)
-  one_pairs = parse_line(trigger, pair_len=1, min_sentence_len=2)
+  #two_pairs = parse_line(trigger, pair_len=2, min_sentence_len=4)
+  #one_pairs = parse_line(trigger, pair_len=1, min_sentence_len=2)
 
-  for pairs in [two_pairs, three_pairs, one_pairs]:
+  for pairs in [three_pairs]:
     for key, vals in pairs.items():
       db.sadd(key, *vals)
 
 @willie.module.commands('wb')
 def wafflebot_talk(bot, trigger):
-  sentence = seed = db.randomkey()
+  sentence = seed = db.randomkey().decode("utf-8")
   max_length = 6 # Number of iterations. 1 = 3 words
 
   for i in range(max_length):
     old_seed = seed
-    seed = db.srandmember(seed)
+    seed = db.srandmember(old_seed)
     if not seed:
-      if len(old_seed.split()) < 2:
-        temp_seed = " ".join([sentence[-2::], old_seed])
-        seed = db.srandmember(temp_seed)
-      elif len(old_seed.split()) < 3:
-        temp_seed = " ".join([sentence[-1::], old_seed])
-        seed = db.srandmember(temp_seed)
-      else:
-        temp_seed = old_seed[-2::]
-        seed = db.srandmember(temp_seed)
-      if not seed:
-        break
+      break
 
-    sentence = " ".join([sentence, seed])
-    if len(seed.split()) < 3 and len(sentence.split()) >= 3:
-      seed = " ".join(sentence.split()[-3::])
-
-
+    sentence = " ".join([sentence, seed.decode("utf-8")])
+    
   bot.say(sentence.capitalize())
 
