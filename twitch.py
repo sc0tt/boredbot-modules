@@ -54,7 +54,7 @@ def monitor_streamers(bot):
 @willie.module.example('.tv  or .tv twitchusername')
 def streamer_status(bot, trigger):
   streamer_name = trigger.group(2)
-  query = streamers if streamer_name is None else streamer_name
+  query = streamers if streamer_name is None else streamer_name.split(" ")
 
   streaming = requests.get('https://api.twitch.tv/kraken/streams', params={"channel": ",".join(query)}).json()
   results = []
@@ -69,6 +69,9 @@ def streamer_status(bot, trigger):
                                                            streamer_url, 
                                                            streamer_viewers, 
                                                            "s" if streamer_viewers != 1 else "" ))
-  bot.say(", ".join(results))
+  if results:
+    bot.say(", ".join(results))
+  else:
+    bot.say("Nobody is currently streaming.")
 
 
