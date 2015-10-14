@@ -26,14 +26,14 @@ def monitor_streamers(bot):
     
     if streamer_name not in currently_streaming:
       currently_streaming[streamer_name] = streamer_game
-      results.append("%s just went live playing %s! (%s, %s viewer%s)" % (streamer_name, 
+      results.append("%s just went live playing %s! (%s - %s viewer%s)" % (streamer_name, 
                                                                           streamer_game, 
                                                                           streamer_url, 
                                                                           streamer_viewers, 
                                                                           "s" if streamer_viewers != 1 else ""))
     elif streamer_game != currently_streaming[streamer_name]:
       currently_streaming[streamer_name] = streamer_game
-      results.append("%s just started playing %s! (%s, %s viewer%s)" % (streamer_name, 
+      results.append("%s just started playing %s! (%s - %s viewer%s)" % (streamer_name, 
                                                                         streamer_game, 
                                                                         streamer_url, 
                                                                         streamer_viewers, 
@@ -65,7 +65,7 @@ def streamer_status(bot, trigger):
     streamer_url = streamer["channel"]["url"]
     streamer_viewers = streamer["viewers"]
     
-    results.append("%s is playing %s (%s, %s viewer%s)" % (streamer_name, 
+    results.append("%s is playing %s (%s - %s viewer%s)" % (streamer_name, 
                                                            streamer_game, 
                                                            streamer_url, 
                                                            streamer_viewers, 
