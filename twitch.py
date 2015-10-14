@@ -7,7 +7,8 @@ streamers = [
   "sc00ty",
   "pacifist117",
   "markiskingm",
-  "supersocks"
+  "supersocks",
+  "agentxleavening"
 ]
 
 currently_streaming = {}
