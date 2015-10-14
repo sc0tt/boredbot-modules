@@ -1,70 +1,72 @@
-import re
-import willie
+import datetime
 import redis
+import markovify
+import willie
+
+# Change this if you want, it will increase the DB size eventually.
+timeout = 60 * 60 * 24 * 30 # 60s * 60m * 24h * 30d = 1 month
+ignore = ["http"]
+
+MAX_OVERLAP_RATIO = 0.5
+MAX_OVERLAP_TOTAL = 10
 
 db = redis.Redis(db=0)
 
-line_sep = re.compile(r'([\!\.\?])')  # Split lines on these characters
-# The higher this is, the smarter the bot will sound.
-# The lowest possible length for a pair of words. The higher the value, the smarter the bot will sound. But also requires more training
+class WaffleBotText(markovify.Text):
+  def test_sentence_input(self, sentence):
+    return True
 
-def parse_line(ln, split_lines=False, pair_len=3, min_sentence_len=6):
-    #First, split the line on all marks that could end a line (!, ., ?)
-    if split_lines:
-        potential_lines = [itm.strip() for itm in line_sep.split(ln)]
-        #Fixes the punctuation missing from the lines that was split on.
-        lines = []
-        for index in range(0, len(potential_lines), 2):
-            if potential_lines[index]:
-                lines.append(potential_lines[index] + potential_lines[index + 1])
-    else:
-        lines = [ln]
+  def _prepare_text(self, text):
+    text = text.strip()
 
-    #Iterate over all potential lines. Ensuring that they meet requirements.
-    #Making a on-the-fly copy of the list so we can manipulate it's contents as we iterate
-    for line in lines[:]:
-        if len(line.split(" ")) < min_sentence_len:
-            lines.remove(line)
+    if not text.endswith((".", "?", "!")):
+      text += "."
 
-    pairs = {}
-    for line in lines:
-        broken_line = line.split(" ")
-        for index in range(0, len(broken_line)-(pair_len * 2) + 1):
-            val_start = index + pair_len
-            val_end = val_start + pair_len
+    return text
 
-            key = " ".join(broken_line[index:pair_len+index])
-            val = " ".join(broken_line[val_start:val_end])
+  def sentence_split(self, text):
+    lines = text.splitlines()
+    text = " ".join([self._prepare_text(line) for line in lines if line.strip()])
 
-            #There could be multiple values for a single key in a input line. Store possible values in a list.
-            if key not in pairs:
-                pairs[key] = []
+    return markovify.split_into_sentences(text)
 
-            pairs[key].append(val)
-    return pairs
 
 @willie.module.rule(r'.*$')
 def wafflebot(bot, trigger):
-  three_pairs = parse_line(trigger)
-  #two_pairs = parse_line(trigger, pair_len=2, min_sentence_len=4)
-  #one_pairs = parse_line(trigger, pair_len=1, min_sentence_len=2)
+  for ignored_item in ignore:
+    if ignored_item.lower() in trigger.lower():
+      continue
 
-  for pairs in [three_pairs]:
-    for key, vals in pairs.items():
-      db.sadd(key, *vals)
+  # have at least 5 words
+  if len(str(trigger).split(" ")) < 5:
+    return
 
-@willie.module.commands('wb')
+  today = datetime.datetime.now()
+  key = "%s%s:%s" % (today.month, today.day, trigger.nick.lower())
+  db.sadd(key, str(trigger))
+  db.expire(key, timeout)
+
+
+@willie.module.commands('talk', 'wb')
 def wafflebot_talk(bot, trigger):
-  sentence = seed = db.randomkey().decode("utf-8")
-  max_length = 6 # Number of iterations. 1 = 3 words
+  nick = trigger.group(2)
+  if nick:
+    pattern = "*:%s" % nick.lower()
+    min_lines = 200
+  else:
+    pattern = "*"
+    min_lines = 100
 
-  for i in range(max_length):
-    old_seed = seed
-    seed = db.srandmember(old_seed)
-    if not seed:
-      break
+  results = []
+  for k in db.keys(pattern):
+    results.extend(db.smembers(k))
 
-    sentence = " ".join([sentence, seed.decode("utf-8")])
-    
-  bot.say(sentence.capitalize())
+  if len(results) < min_lines:
+    bot.say("Sorry %s, there is not enough data." % trigger.nick)
+  else:
+    model = WaffleBotText("\n".join([r.decode('utf8') for r in results]))
+    resp = model.make_short_sentence(500,
+      max_overlap_total=MAX_OVERLAP_TOTAL, 
+      max_overlap_ratio=MAX_OVERLAP_RATIO)
+    bot.say(resp)
 
