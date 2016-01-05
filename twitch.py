@@ -1,5 +1,5 @@
 import requests
-import willie
+import sopel
 
 # TODO: Make these config options c:
 announce_chan = "#boardgamers"
@@ -8,13 +8,15 @@ streamers = [
   "pacifist117",
   "markiskingm",
   "supersocks",
-  "agentxleavening"
+  "agentxleavening",
+  "anothrnick"
 ]
 
 currently_streaming = {}
 
-@willie.module.interval(10)
+@sopel.module.interval(10)
 def monitor_streamers(bot):
+  global currently_streaming
   streaming_names = []
   streaming = requests.get('https://api.twitch.tv/kraken/streams', params={"channel": ",".join(streamers)}).json()
   results = []
@@ -51,8 +53,8 @@ def monitor_streamers(bot):
 
 
 
-@willie.module.commands('twitchtv','tv','twitch', 'teevee')
-@willie.module.example('.tv  or .tv twitchusername')
+@sopel.module.commands('twitchtv','tv','twitch', 'teevee')
+@sopel.module.example('.tv  or .tv twitchusername')
 def streamer_status(bot, trigger):
   streamer_name = trigger.group(2)
   query = streamers if streamer_name is None else streamer_name.split(" ")
